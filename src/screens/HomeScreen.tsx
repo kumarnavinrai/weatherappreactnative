@@ -101,7 +101,7 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={{flexGrow: 1}} className=" bg-slate-500">
       <View className="flex flex-1 bg-slate-500">
         <StatusBar style="light" />
-        <ErrorBoundary> {/* Wrap your conditional rendering with ErrorBoundary */}
+        {/* <ErrorBoundary> Wrap your conditional rendering with ErrorBoundary */}
         {loading ? (
           <View className="flex flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#FFFFFF" />
@@ -158,7 +158,7 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
-        </ErrorBoundary>
+        {/* </ErrorBoundary> */}
       </View>
     </ScrollView>
   );
