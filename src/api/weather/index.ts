@@ -20,7 +20,6 @@ const forecastLatLongpoint = (params: Params): string =>
   `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${params.latitude},${params.longitude}&aqi=yes&alerts=yes`;
 
 const apiCall = async <T>(endpoint: string): Promise<T> => {
-  console.log(endpoint);
   const options: AxiosRequestConfig = {
     method: 'GET',
     url: endpoint,

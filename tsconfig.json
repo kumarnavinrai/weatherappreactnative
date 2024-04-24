@@ -4,8 +4,10 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
-      "tests": ["tests/*"],
       "@/*": ["src/*"]
-    }
-  }
+    },
+    "types": ["jest", "react", "react-native"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"]
 }

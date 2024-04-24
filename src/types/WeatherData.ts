@@ -24,8 +24,15 @@ export type ForecastDay = {
   };
 };
 
+export type ForecastTime = {
+  time: string;
+  time_epoch: number;
+  condition?: WeatherCondition;
+  avgtemp_c: number;
+};
+
 export type Forecast = {
-  forecastday?: ForecastDay[];
+  forecastday?: ForecastTime[];
 };
 
 export type WeatherData = {

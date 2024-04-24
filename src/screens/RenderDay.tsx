@@ -1,13 +1,12 @@
 import removeStartingDoubleSlash from '@/helpers/removeStartingDoubleSlash';
-import {ForecastDay} from '@/types/WeatherData';
+import {ForecastTime} from '@/types/WeatherData';
 import {Image, Text, View} from 'react-native';
 
 type RenderImageProp = {
-  item: ForecastDay;
+  item: ForecastTime;
 };
 
-const RenderImage: React.FC<RenderImageProp> = ({item}) => {
-  console.log('Image: ', item?.condition?.text);
+const RenderDay: React.FC<RenderImageProp> = ({item}) => {
   let date = new Date(item.time);
   let options: Intl.DateTimeFormatOptions = {weekday: 'long'};
   let dayName = date.toLocaleDateString('en-US', options);
@@ -15,13 +14,7 @@ const RenderImage: React.FC<RenderImageProp> = ({item}) => {
 
   let providedDateTime = new Date(item.time);
   let currentDateTime = new Date();
-  console.log("providedDateTime", providedDateTime)
-  console.log("currentDateTime", currentDateTime)
-  // if (providedDateTime < currentDateTime) {
-  //   return null;
-  // }
 
-  //if (index == 0) return null;
   return (
     <View
       key={'' + item?.time_epoch}
@@ -49,4 +42,4 @@ const RenderImage: React.FC<RenderImageProp> = ({item}) => {
   );
 };
 
-export default RenderImage;
+export default RenderDay;

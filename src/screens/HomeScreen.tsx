@@ -6,7 +6,8 @@ import {
   ActivityIndicator,
   FlatList,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState, ErrorInfo} from 'react';
+
 import {StatusBar} from 'expo-status-bar';
 import {FontAwesome} from '@expo/vector-icons';
 import {debounce} from 'lodash';
@@ -22,6 +23,34 @@ import CurrentWeather from './CurrentWeather';
 import LocationsList from './LocationsList';
 import SearchBar from './SearchBar';
 
+// ErrorBoundary component to catch and handle errors
+class ErrorBoundary extends React.Component<{}, { hasError: boolean }> {
+  constructor(props: {}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error): { hasError: boolean } {
+    // Update state to indicate an error has occurred
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // You can log the error to an error reporting service
+    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render(): React.ReactNode {
+    if (this.state.hasError) {
+      // Render fallback UI when an error occurs
+      return <p>Something went wrong. Please try again later.</p>;
+    }
+
+    // Render children normally if no error occurred
+    return this.props.children;
+  }
+}
+
 export default function HomeScreen() {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [locations, setLocations] = useState<LocationData[]>([]);
@@ -29,7 +58,6 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
 
   const handelLocation = (loc: {name: string}) => {
-    console.log(locations);
     setLocations([]);
     setShowSearchBar(false);
     setLoading(true);
@@ -38,7 +66,6 @@ export default function HomeScreen() {
     }).then(data => {
       setWeather(data);
       setLoading(false);
-      console.log(data);
     });
   };
 
@@ -59,7 +86,7 @@ export default function HomeScreen() {
         Alert.alert('Permission to access location was denied');
         return;
       }
-      Location.getCurrentPositionAsync({}).then(location => {
+      await Location.getCurrentPositionAsync({}).then(location => {
         fetchWeatherByLatLong(location.coords).then(data => {
           setWeather(data);
           setLoading(false);
@@ -70,11 +97,11 @@ export default function HomeScreen() {
 
   const handleDebounce = useCallback(debounce(handleSearch, 500), []);
   const {current, location} = weather;
-  console.log("weather", weather?.forecast?.forecastday[0].hour)
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}} className=" bg-slate-500">
       <View className="flex flex-1 bg-slate-500">
         <StatusBar style="light" />
+        <ErrorBoundary> {/* Wrap your conditional rendering with ErrorBoundary */}
         {loading ? (
           <View className="flex flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#FFFFFF" />
@@ -88,12 +115,15 @@ export default function HomeScreen() {
                 setShowSearchBar={setShowSearchBar}
                 handleDebounce={handleDebounce}
               />
-              {locations.length > 0 && showSearchBar ? (
+              {locations?.length > 0 && showSearchBar ? (
+                
                 <LocationsList
                   locations={locations}
                   handleLocation={handelLocation}
                 />
+               
               ) : null}
+              
             </View>
 
             {/* FORCAST SECTION */}
@@ -111,7 +141,7 @@ export default function HomeScreen() {
               {/*  CURRENT WEATHER  */}
               <CurrentWeather current={current} />
 
-              {/* NEXT DAYS FORCAST */}
+              {/* NEXT DAYS FORCAST */} 
               <View className="flex-row items-center ml-2 my-6">
                 <FontAwesome name="calendar" size={30} color="white" />
                 <Text className="text-white font-semibold ml-3 text-lg">
@@ -128,6 +158,7 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
+        </ErrorBoundary>
       </View>
     </ScrollView>
   );
